@@ -4,6 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AirWatch — Environmental Monitoring</title>
+  <script src="config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Share+Tech+Mono&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet"/>
@@ -809,10 +810,11 @@
   // ============================================
   // CONFIG — EDIT THESE
   // ============================================
-  const THINGSPEAK_CHANNEL_ID = "YOUR_CHANNEL_ID";
-  const THINGSPEAK_READ_API_KEY = "YOUR_READ_API_KEY";
-  const OPENWEATHER_API_KEY = "YOUR_OPENWEATHER_KEY";
-  const CITY = "Bengaluru";
+const THINGSPEAK_CHANNEL_ID = CONFIG.THINGSPEAK_CHANNEL_ID;
+const THINGSPEAK_READ_API_KEY = CONFIG.THINGSPEAK_READ_API_KEY;
+const OPENWEATHER_API_KEY = CONFIG.OPENWEATHER_API_KEY;
+const CITY = CONFIG.CITY;
+  
   // ============================================
 
   let indoor = { gas: null, temp: null, hum: null };
