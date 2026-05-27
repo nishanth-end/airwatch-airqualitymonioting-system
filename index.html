@@ -1,27 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="config.js"></script>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AirWatch — Control Panel</title>
+  <title>AirWatch — Environmental Monitoring</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Share+Tech+Mono&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet"/>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
-
     :root {
-      --bg: #050a0e;
-      --panel: #0a1628;
-      --border: #0d3b66;
-      --accent: #00d4ff;
-      --green: #00ff88;
-      --yellow: #ffcc00;
-      --red: #ff3366;
-      --text: #c0d8f0;
-      --dim: #4a6b8a;
-      --glow: 0 0 20px rgba(0, 212, 255, 0.3);
-      --glow-green: 0 0 20px rgba(0, 255, 136, 0.4);
-      --glow-red: 0 0 20px rgba(255, 51, 102, 0.4);
+      --bg: #1c1409;
+      --bg2: #221a0c;
+      --bg3: #2b2010;
+      --panel: #171208;
+      --border: #5a4828;
+      --border2: #3a2e18;
+      --amber: #e8c060;
+      --amber2: #c8a040;
+      --amber3: #8b6914;
+      --tan: #d4a870;
+      --dim: #7a6040;
+      --dim2: #5a4428;
+      --green: #8fbc5a;
+      --green2: #5a8c2a;
+      --red: #c85a3a;
+      --yellow: #d4a030;
+      --text: #c8a860;
+      --serif: 'Special Elite', serif;
+      --mono: 'Share Tech Mono', monospace;
+      --fell: 'IM Fell English', serif;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -29,148 +36,154 @@
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'Share Tech Mono', monospace;
+      font-family: var(--mono);
       min-height: 100vh;
-      overflow-x: hidden;
     }
 
-    body::before {
+    /* SCANLINE OVERLAY */
+    body::after {
       content: '';
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: 
-        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,212,255,0.015) 2px, rgba(0,212,255,0.015) 4px),
-        repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,212,255,0.015) 2px, rgba(0,212,255,0.015) 4px);
+      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px);
       pointer-events: none;
-      z-index: 0;
+      z-index: 9999;
     }
 
-    .container {
-      position: relative;
-      z-index: 1;
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    /* HEADER */
-    .header {
+    /* NAV */
+    .nav {
+      background: var(--panel);
+      border-bottom: 2px solid var(--border);
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 0;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 30px;
+      align-items: stretch;
+      padding: 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
 
-    .header-left {
+    .nav-brand {
+      padding: 14px 24px;
+      border-right: 1px solid var(--border2);
       display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .logo-icon {
-      width: 50px;
-      height: 50px;
-      border: 2px solid var(--accent);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
+      flex-direction: column;
       justify-content: center;
-      box-shadow: var(--glow);
-      animation: pulse 2s infinite;
     }
 
-    @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 10px rgba(0,212,255,0.3); }
-      50% { box-shadow: 0 0 30px rgba(0,212,255,0.8); }
+    .nav-title {
+      font-family: var(--serif);
+      font-size: 20px;
+      color: var(--amber);
+      letter-spacing: 5px;
     }
 
-    .logo-icon svg { width: 28px; height: 28px; }
-
-    .title {
-      font-family: 'Orbitron', monospace;
-      font-size: 28px;
-      font-weight: 900;
-      color: var(--accent);
-      text-shadow: 0 0 20px rgba(0,212,255,0.5);
-      letter-spacing: 3px;
-    }
-
-    .subtitle {
-      font-size: 11px;
+    .nav-sub {
+      font-size: 9px;
       color: var(--dim);
-      letter-spacing: 4px;
-      margin-top: 3px;
+      letter-spacing: 3px;
+      margin-top: 2px;
     }
 
-    .header-right {
-      text-align: right;
+    .nav-links {
+      display: flex;
+      align-items: stretch;
+      flex: 1;
     }
 
-    .status-online {
+    .nav-link {
+      padding: 0 24px;
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--dim);
+      cursor: pointer;
+      border-right: 1px solid var(--border2);
       display: flex;
       align-items: center;
       gap: 8px;
-      justify-content: flex-end;
-      margin-bottom: 5px;
+      transition: background 0.2s, color 0.2s;
+      text-transform: uppercase;
+      user-select: none;
     }
 
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: var(--glow-green);
-      animation: blink 1.5s infinite;
+    .nav-link:hover { background: var(--bg3); color: var(--tan); }
+    .nav-link.active { background: var(--bg2); color: var(--amber); border-bottom: 2px solid var(--amber3); }
+
+    .nav-link svg { width: 14px; height: 14px; opacity: 0.6; }
+    .nav-link.active svg { opacity: 1; }
+
+    .nav-right {
+      margin-left: auto;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-left: 1px solid var(--border2);
     }
 
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    .status-text {
-      color: var(--green);
-      font-size: 12px;
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
       letter-spacing: 2px;
     }
 
-    .last-update {
-      font-size: 11px;
+    .status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: blink 2s infinite;
+    }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .clock {
+      font-size: 13px;
+      color: var(--amber2);
+      letter-spacing: 2px;
+    }
+
+    /* PAGES */
+    .page { display: none; padding: 24px; max-width: 1400px; margin: 0 auto; }
+    .page.active { display: block; }
+
+    /* SECTION HEADER */
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border2);
+    }
+
+    .section-title {
+      font-family: var(--serif);
+      font-size: 16px;
+      color: var(--amber);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .section-sub {
+      font-size: 10px;
       color: var(--dim);
+      letter-spacing: 2px;
     }
 
-    /* GRID */
-    .grid-top {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      margin-bottom: 20px;
-    }
+    /* GRID LAYOUTS */
+    .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 16px; }
+    .grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .grid-2-eq { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .grid-charts { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 16px; }
 
-    .grid-bottom {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 20px;
-      margin-bottom: 20px;
-    }
-
-    .grid-charts {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      margin-bottom: 20px;
-    }
-
-    /* PANELS */
+    /* PANEL */
     .panel {
       background: var(--panel);
       border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 20px;
+      border-radius: 2px;
+      padding: 18px;
       position: relative;
-      overflow: hidden;
     }
 
     .panel::before {
@@ -178,463 +191,674 @@
       position: absolute;
       top: 0; left: 0; right: 0;
       height: 2px;
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
-      opacity: 0.6;
+      background: var(--amber3);
+      opacity: 0.5;
+    }
+
+    .panel::after {
+      content: '';
+      position: absolute;
+      bottom: 6px; right: 6px;
+      width: 12px; height: 12px;
+      border-bottom: 1px solid var(--border2);
+      border-right: 1px solid var(--border2);
     }
 
     .panel-label {
-      font-size: 10px;
+      font-size: 9px;
       letter-spacing: 3px;
       color: var(--dim);
-      margin-bottom: 15px;
       text-transform: uppercase;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border2);
     }
 
     /* SENSOR CARDS */
-    .sensor-value {
-      font-family: 'Orbitron', monospace;
-      font-size: 42px;
-      font-weight: 700;
+    .sensor-val {
+      font-family: var(--mono);
+      font-size: 48px;
+      color: var(--amber);
       line-height: 1;
-      margin-bottom: 5px;
+      margin-bottom: 4px;
     }
 
     .sensor-unit {
-      font-size: 13px;
+      font-size: 10px;
       color: var(--dim);
-      letter-spacing: 2px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
     }
 
     .sensor-bar {
-      margin-top: 15px;
-      height: 4px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 2px;
-      overflow: hidden;
+      margin-top: 14px;
+      height: 3px;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
     }
 
     .sensor-bar-fill {
       height: 100%;
-      border-radius: 2px;
-      transition: width 1s ease;
+      background: var(--amber3);
+      transition: width 1.2s ease;
     }
 
     .sensor-icon {
       position: absolute;
-      top: 20px;
-      right: 20px;
-      opacity: 0.15;
-      font-size: 40px;
+      top: 18px;
+      right: 18px;
+      opacity: 0.06;
+      font-size: 48px;
+      font-family: var(--serif);
+      color: var(--amber);
+      pointer-events: none;
     }
 
-    /* STATUS PANEL */
-    .status-panel {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      min-height: 200px;
-    }
-
-    .aqi-circle {
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      border: 3px solid var(--accent);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 15px;
-      position: relative;
-      box-shadow: var(--glow);
-    }
-
-    .aqi-number {
-      font-family: 'Orbitron', monospace;
-      font-size: 36px;
-      font-weight: 900;
-    }
-
-    .aqi-label {
-      font-size: 9px;
-      letter-spacing: 2px;
-      color: var(--dim);
-    }
-
-    .aqi-status {
-      font-family: 'Orbitron', monospace;
-      font-size: 16px;
-      font-weight: 700;
+    /* STATUS */
+    .status-big {
+      font-family: var(--serif);
+      font-size: 32px;
       letter-spacing: 2px;
       margin-bottom: 8px;
     }
 
-    .health-advisory {
+    .status-advisory {
       font-size: 11px;
       color: var(--dim);
-      line-height: 1.6;
-      max-width: 200px;
+      line-height: 1.8;
+      font-family: var(--fell);
+      font-style: italic;
     }
 
-    /* OUTDOOR COMPARISON */
-    .comparison-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
+    .status-meta {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border2);
     }
 
-    .comparison-item {
-      background: rgba(0,0,0,0.3);
-      border: 1px solid rgba(13,59,102,0.5);
-      border-radius: 4px;
-      padding: 15px;
-    }
-
-    .comparison-label {
-      font-size: 9px;
-      letter-spacing: 2px;
-      color: var(--dim);
-      margin-bottom: 8px;
-    }
-
-    .comparison-values {
+    .meta-row {
       display: flex;
       justify-content: space-between;
-      align-items: flex-end;
+      font-size: 11px;
+      margin-bottom: 7px;
     }
 
-    .comp-val {
-      font-family: 'Orbitron', monospace;
-      font-size: 22px;
-      font-weight: 700;
+    .meta-label { color: var(--dim); }
+    .meta-val { color: var(--tan); }
+
+    /* OUTDOOR */
+    .outdoor-temp {
+      font-family: var(--serif);
+      font-size: 52px;
+      color: var(--amber);
+      line-height: 1;
+      margin-bottom: 4px;
     }
 
-    .comp-outdoor {
-      font-size: 13px;
+    .outdoor-desc {
+      font-size: 12px;
       color: var(--dim);
-      text-align: right;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
     }
 
-    .comp-diff {
-      font-size: 10px;
-      margin-top: 3px;
+    .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .comp-item {
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      padding: 10px 12px;
     }
 
-    .better { color: var(--green); }
-    .worse { color: var(--red); }
-    .same { color: var(--yellow); }
+    .comp-label { font-size: 9px; color: var(--dim2); letter-spacing: 2px; margin-bottom: 6px; }
+
+    .comp-vals { display: flex; justify-content: space-between; align-items: flex-end; }
+
+    .comp-main { font-family: var(--mono); font-size: 20px; color: var(--amber); }
+
+    .comp-side { font-size: 10px; color: var(--dim); text-align: right; line-height: 1.5; }
+
+    .diff-better { color: var(--green); }
+    .diff-worse { color: var(--red); }
+    .diff-same { color: var(--yellow); }
 
     /* CHARTS */
-    .chart-container {
-      position: relative;
-      height: 120px;
-    }
+    .chart-wrap { position: relative; height: 110px; }
 
-    /* SCROLLING LOG */
-    .log-panel {
-      height: 180px;
+    /* LOG */
+    .log-wrap {
+      height: 140px;
       overflow-y: auto;
     }
 
-    .log-panel::-webkit-scrollbar { width: 4px; }
-    .log-panel::-webkit-scrollbar-track { background: transparent; }
-    .log-panel::-webkit-scrollbar-thumb { background: var(--border); }
+    .log-wrap::-webkit-scrollbar { width: 3px; }
+    .log-wrap::-webkit-scrollbar-track { background: transparent; }
+    .log-wrap::-webkit-scrollbar-thumb { background: var(--border2); }
 
-    .log-entry {
-      font-size: 11px;
-      padding: 5px 0;
-      border-bottom: 1px solid rgba(13,59,102,0.3);
+    .log-row {
       display: flex;
       gap: 10px;
+      font-size: 10px;
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(90,72,40,0.2);
     }
 
-    .log-time { color: var(--dim); min-width: 60px; }
-    .log-msg { color: var(--text); }
+    .log-t { color: var(--dim2); min-width: 55px; }
+    .log-m { color: var(--tan); }
 
-    /* CORNER DECORATIONS */
-    .panel::after {
+    /* HISTORY PAGE */
+    .hist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .chart-wrap-lg { position: relative; height: 220px; }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .stat-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 14px;
+      text-align: center;
+    }
+
+    .stat-label { font-size: 9px; color: var(--dim); letter-spacing: 2px; margin-bottom: 8px; }
+    .stat-val { font-family: var(--mono); font-size: 28px; color: var(--amber); }
+    .stat-sub { font-size: 9px; color: var(--dim2); margin-top: 4px; letter-spacing: 1px; }
+
+    /* INFO PAGE */
+    .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px; }
+
+    .info-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 20px;
+      position: relative;
+    }
+
+    .info-card::before {
       content: '';
       position: absolute;
-      bottom: 0; right: 0;
-      width: 20px; height: 20px;
-      border-bottom: 2px solid var(--border);
-      border-right: 2px solid var(--border);
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--amber3);
+      opacity: 0.4;
     }
 
-    /* LOADING */
-    .loading {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      color: var(--dim);
-    }
-
-    .spinner {
-      width: 12px; height: 12px;
-      border: 2px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* OUTDOOR WEATHER */
-    .weather-main {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      margin-bottom: 20px;
-    }
-
-    .weather-temp {
-      font-family: 'Orbitron', monospace;
+    .info-num {
+      font-family: var(--serif);
       font-size: 48px;
-      font-weight: 700;
-      color: var(--accent);
+      color: var(--border);
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      line-height: 1;
     }
 
-    .weather-desc {
-      font-size: 13px;
-      color: var(--text);
-      text-transform: capitalize;
-      margin-bottom: 5px;
-    }
-
-    .weather-city {
-      font-size: 10px;
-      color: var(--dim);
+    .info-title {
+      font-family: var(--serif);
+      font-size: 18px;
+      color: var(--amber);
       letter-spacing: 2px;
+      margin-bottom: 10px;
     }
 
-    @media (max-width: 768px) {
-      .grid-top { grid-template-columns: 1fr; }
-      .grid-bottom { grid-template-columns: 1fr; }
-      .grid-charts { grid-template-columns: 1fr; }
-      .title { font-size: 20px; }
+    .info-body {
+      font-family: var(--fell);
+      font-size: 13px;
+      color: var(--tan);
+      line-height: 1.9;
+    }
+
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      margin-top: 12px;
+    }
+
+    .info-table th {
+      text-align: left;
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: var(--dim);
+      padding: 6px 8px;
+      border-bottom: 1px solid var(--border2);
+      font-family: var(--mono);
+      font-weight: normal;
+    }
+
+    .info-table td {
+      padding: 7px 8px;
+      border-bottom: 1px solid rgba(90,72,40,0.2);
+      color: var(--tan);
+      font-family: var(--mono);
+    }
+
+    .info-table tr:last-child td { border-bottom: none; }
+
+    /* FOOTER */
+    .footer {
+      background: var(--panel);
+      border-top: 1px solid var(--border2);
+      padding: 10px 24px;
+      font-size: 10px;
+      color: var(--dim2);
+      letter-spacing: 2px;
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+
+    /* SCREWS */
+    .screws {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+    }
+
+    .screw {
+      position: absolute;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      border: 1px solid var(--border2);
+      background: var(--bg2);
+    }
+
+    @media (max-width: 900px) {
+      .grid-3, .grid-charts { grid-template-columns: 1fr; }
+      .grid-2, .grid-2-eq, .hist-grid, .info-grid { grid-template-columns: 1fr; }
+      .stat-row { grid-template-columns: 1fr 1fr; }
+      .comp-grid { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
 <body>
-<div class="container">
 
-  <!-- HEADER -->
-  <div class="header">
-    <div class="header-left">
-      <div class="logo-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="2">
-          <path d="M12 2a10 10 0 1 0 10 10"/>
-          <path d="M12 6v6l4 2"/>
-          <circle cx="18" cy="6" r="3" fill="#00d4ff" opacity="0.5"/>
-        </svg>
-      </div>
-      <div>
-        <div class="title">AIRWATCH</div>
-        <div class="subtitle">ENVIRONMENTAL MONITORING SYSTEM</div>
-      </div>
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand">
+    <div class="nav-title">AIRWATCH</div>
+    <div class="nav-sub">Environmental Monitoring System</div>
+  </div>
+  <div class="nav-links">
+    <div class="nav-link active" onclick="showPage('dashboard', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
     </div>
-    <div class="header-right">
-      <div class="status-online">
-        <div class="status-dot" id="statusDot"></div>
-        <div class="status-text" id="statusText">CONNECTING...</div>
-      </div>
-      <div class="last-update" id="lastUpdate">LAST UPDATE: --:--:--</div>
+    <div class="nav-link" onclick="showPage('history', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      History
+    </div>
+    <div class="nav-link" onclick="showPage('info', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Air Quality Guide
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="status-indicator">
+      <div class="status-dot" id="statusDot"></div>
+      <span id="statusText" style="color: var(--green); font-size:10px; letter-spacing:2px;">CONNECTING</span>
+    </div>
+    <div class="clock" id="clock">--:--:--</div>
+  </div>
+</nav>
+
+<!-- ==================== DASHBOARD PAGE ==================== -->
+<div class="page active" id="page-dashboard">
+
+  <!-- SENSOR CARDS -->
+  <div class="grid-3" style="margin-top:24px;">
+    <div class="panel">
+      <div class="sensor-icon">G</div>
+      <div class="panel-label">// Gas Concentration · MQ-2</div>
+      <div class="sensor-val" id="gasVal">---</div>
+      <div class="sensor-unit">Parts Per Million</div>
+      <div class="sensor-bar"><div class="sensor-bar-fill" id="gasBar" style="width:0%"></div></div>
+    </div>
+    <div class="panel">
+      <div class="sensor-icon">T</div>
+      <div class="panel-label">// Temperature · DHT11</div>
+      <div class="sensor-val" id="tempVal" style="color:var(--tan)">---</div>
+      <div class="sensor-unit">Degrees Celsius</div>
+      <div class="sensor-bar"><div class="sensor-bar-fill" id="tempBar" style="width:0%; background:#8b5a14"></div></div>
+    </div>
+    <div class="panel">
+      <div class="sensor-icon">H</div>
+      <div class="panel-label">// Relative Humidity · DHT11</div>
+      <div class="sensor-val" id="humVal" style="color:var(--green)">---</div>
+      <div class="sensor-unit">Percent RH</div>
+      <div class="sensor-bar"><div class="sensor-bar-fill" id="humBar" style="width:0%; background:var(--green2)"></div></div>
     </div>
   </div>
 
-  <!-- TOP ROW: 3 SENSOR CARDS -->
-  <div class="grid-top">
-
-    <!-- GAS -->
+  <!-- STATUS + OUTDOOR -->
+  <div class="grid-2">
     <div class="panel">
-      <div class="sensor-icon">💨</div>
-      <div class="panel-label">// GAS CONCENTRATION</div>
-      <div class="sensor-value" id="gasValue" style="color: var(--accent);">---</div>
-      <div class="sensor-unit">PPM — MQ-2 SENSOR</div>
-      <div class="sensor-bar">
-        <div class="sensor-bar-fill" id="gasBar" style="width:0%; background: var(--accent); box-shadow: 0 0 8px rgba(0,212,255,0.8);"></div>
-      </div>
-    </div>
-
-    <!-- TEMPERATURE -->
-    <div class="panel">
-      <div class="sensor-icon">🌡️</div>
-      <div class="panel-label">// TEMPERATURE</div>
-      <div class="sensor-value" id="tempValue" style="color: var(--yellow);">---</div>
-      <div class="sensor-unit">°C — DHT11 SENSOR</div>
-      <div class="sensor-bar">
-        <div class="sensor-bar-fill" id="tempBar" style="width:0%; background: var(--yellow); box-shadow: 0 0 8px rgba(255,204,0,0.8);"></div>
-      </div>
-    </div>
-
-    <!-- HUMIDITY -->
-    <div class="panel">
-      <div class="sensor-icon">💧</div>
-      <div class="panel-label">// HUMIDITY</div>
-      <div class="sensor-value" id="humValue" style="color: #00aaff;">---</div>
-      <div class="sensor-unit">% RH — DHT11 SENSOR</div>
-      <div class="sensor-bar">
-        <div class="sensor-bar-fill" id="humBar" style="width:0%; background: #00aaff; box-shadow: 0 0 8px rgba(0,170,255,0.8);"></div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- MIDDLE ROW: STATUS + OUTDOOR -->
-  <div class="grid-bottom">
-
-    <!-- OUTDOOR COMPARISON -->
-    <div class="panel">
-      <div class="panel-label">// OUTDOOR CONDITIONS — REAL-TIME COMPARISON</div>
-      <div class="weather-main">
-        <div class="weather-temp" id="outdoorTemp">--°</div>
+      <div class="panel-label">// Outdoor Conditions · Real-Time Comparison</div>
+      <div style="display:flex; align-items:flex-start; gap:24px; margin-bottom:16px;">
         <div>
-          <div class="weather-desc" id="weatherDesc">Loading...</div>
-          <div class="weather-city" id="weatherCity">BENGALURU, IN</div>
+          <div class="outdoor-temp" id="outTemp">--°</div>
+          <div class="outdoor-desc" id="outDesc">Loading weather data...</div>
+        </div>
+        <div style="padding-top:8px;">
+          <div style="font-size:9px; color:var(--dim); letter-spacing:2px; margin-bottom:4px;">LOCATION</div>
+          <div style="font-size:12px; color:var(--tan); letter-spacing:1px;" id="outCity">--</div>
+          <div style="font-size:9px; color:var(--dim); margin-top:8px; letter-spacing:2px;">WIND</div>
+          <div style="font-size:12px; color:var(--tan);" id="outWind">-- m/s</div>
         </div>
       </div>
-      <div class="comparison-grid">
-        <div class="comparison-item">
-          <div class="comparison-label">// TEMPERATURE</div>
-          <div class="comparison-values">
-            <div class="comp-val" id="compIndoorTemp" style="color:var(--yellow)">--°</div>
-            <div class="comp-outdoor">
-              <div id="compOutdoorTemp">--° outdoor</div>
-              <div class="comp-diff" id="compTempDiff">--</div>
+      <div class="comp-grid">
+        <div class="comp-item">
+          <div class="comp-label">// Temperature</div>
+          <div class="comp-vals">
+            <div class="comp-main" id="compIndTemp">--°</div>
+            <div class="comp-side">
+              <div id="compOutTempVal">--° out</div>
+              <div id="compTempDiff" class="diff-same">--</div>
             </div>
           </div>
         </div>
-        <div class="comparison-item">
-          <div class="comparison-label">// HUMIDITY</div>
-          <div class="comparison-values">
-            <div class="comp-val" id="compIndoorHum" style="color:#00aaff">--%</div>
-            <div class="comp-outdoor">
-              <div id="compOutdoorHum">--% outdoor</div>
-              <div class="comp-diff" id="compHumDiff">--</div>
+        <div class="comp-item">
+          <div class="comp-label">// Humidity</div>
+          <div class="comp-vals">
+            <div class="comp-main" id="compIndHum">--%</div>
+            <div class="comp-side">
+              <div id="compOutHumVal">--% out</div>
+              <div id="compHumDiff" class="diff-same">--</div>
             </div>
           </div>
         </div>
-        <div class="comparison-item">
-          <div class="comparison-label">// OUTDOOR AQI</div>
-          <div class="comparison-values">
-            <div class="comp-val" id="outdoorAQI" style="color:var(--accent)">--</div>
-            <div class="comp-outdoor">
-              <div id="outdoorAQILabel">--</div>
-            </div>
+        <div class="comp-item">
+          <div class="comp-label">// Outdoor AQI</div>
+          <div class="comp-vals">
+            <div class="comp-main" id="outAQI">--</div>
+            <div class="comp-side"><div id="outAQILabel">--</div></div>
           </div>
         </div>
-        <div class="comparison-item">
-          <div class="comparison-label">// WIND SPEED</div>
-          <div class="comparison-values">
-            <div class="comp-val" id="windSpeed" style="color:var(--green)">--</div>
-            <div class="comp-outdoor">
-              <div>m/s</div>
-            </div>
+        <div class="comp-item">
+          <div class="comp-label">// Feels Like</div>
+          <div class="comp-vals">
+            <div class="comp-main" id="outFeels">--°</div>
+            <div class="comp-side"><div>apparent</div></div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- AIR QUALITY STATUS -->
-    <div class="panel status-panel">
-      <div class="panel-label">// INDOOR AIR STATUS</div>
-      <div class="aqi-circle" id="aqiCircle">
-        <div class="aqi-number" id="aqiNumber">--</div>
-        <div class="aqi-label">GAS PPM</div>
+    <div class="panel" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; min-height:280px;">
+      <div class="panel-label" style="align-self:stretch;">// Indoor Air Quality Status</div>
+      <div style="margin: 16px 0 12px;">
+        <div style="font-size:10px; color:var(--dim); letter-spacing:3px; margin-bottom:8px;">CURRENT READING</div>
+        <div style="font-family:var(--mono); font-size:56px; color:var(--amber); line-height:1;" id="statusPPM">--</div>
+        <div style="font-size:10px; color:var(--dim); letter-spacing:2px;">PPM</div>
       </div>
-      <div class="aqi-status" id="aqiStatus">SCANNING...</div>
-      <div class="health-advisory" id="healthAdvisory">Initializing sensors and fetching data...</div>
+      <div class="status-big" id="statusWord" style="color:var(--dim);">SCANNING</div>
+      <div class="status-advisory" id="statusAdvisory" style="max-width:220px; margin-top:8px;">
+        Initialising sensor array and establishing uplink...
+      </div>
+      <div class="status-meta" style="align-self:stretch;">
+        <div class="meta-row">
+          <span class="meta-label">Safe threshold</span>
+          <span class="meta-val">200 PPM</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Last update</span>
+          <span class="meta-val" id="lastUpdate">--:--:--</span>
+        </div>
+      </div>
     </div>
-
   </div>
 
-  <!-- CHARTS ROW -->
+  <!-- CHARTS -->
   <div class="grid-charts">
     <div class="panel">
-      <div class="panel-label">// GAS — 8 READINGS</div>
-      <div class="chart-container">
-        <canvas id="gasChart"></canvas>
-      </div>
+      <div class="panel-label">// Gas · Last 8 Readings</div>
+      <div class="chart-wrap"><canvas id="gasChart"></canvas></div>
     </div>
     <div class="panel">
-      <div class="panel-label">// TEMPERATURE — 8 READINGS</div>
-      <div class="chart-container">
-        <canvas id="tempChart"></canvas>
-      </div>
+      <div class="panel-label">// Temperature · Last 8 Readings</div>
+      <div class="chart-wrap"><canvas id="tempChart"></canvas></div>
     </div>
     <div class="panel">
-      <div class="panel-label">// HUMIDITY — 8 READINGS</div>
-      <div class="chart-container">
-        <canvas id="humChart"></canvas>
-      </div>
+      <div class="panel-label">// Humidity · Last 8 Readings</div>
+      <div class="chart-wrap"><canvas id="humChart"></canvas></div>
     </div>
   </div>
 
   <!-- LOG -->
   <div class="panel">
-    <div class="panel-label">// SYSTEM LOG</div>
-    <div class="log-panel" id="logPanel"></div>
+    <div class="panel-label">// System Transmission Log</div>
+    <div class="log-wrap" id="logPanel"></div>
   </div>
 
+  <div class="footer">
+    <span>DSCE · IDT SEM 2 · 2026</span>
+    <span id="footerChannel">CH ------ · THINGSPEAK</span>
+    <span>SYSTEM NOMINAL</span>
+  </div>
+</div>
+
+<!-- ==================== HISTORY PAGE ==================== -->
+<div class="page" id="page-history">
+  <div style="margin-top:24px;">
+    <div class="section-header">
+      <div class="section-title">Data History</div>
+      <div class="section-sub">// Last 30 recorded readings from ThingSpeak</div>
+    </div>
+
+    <div class="stat-row" id="histStats">
+      <div class="stat-card"><div class="stat-label">Avg Gas (PPM)</div><div class="stat-val" id="avgGas">--</div><div class="stat-sub">30-point average</div></div>
+      <div class="stat-card"><div class="stat-label">Avg Temp (°C)</div><div class="stat-val" id="avgTemp">--</div><div class="stat-sub">30-point average</div></div>
+      <div class="stat-card"><div class="stat-label">Avg Humidity (%)</div><div class="stat-val" id="avgHum">--</div><div class="stat-sub">30-point average</div></div>
+      <div class="stat-card"><div class="stat-label">Peak Gas (PPM)</div><div class="stat-val" id="peakGas">--</div><div class="stat-sub">Session maximum</div></div>
+    </div>
+
+    <div class="hist-grid">
+      <div class="panel">
+        <div class="panel-label">// Gas Concentration Trend</div>
+        <div class="chart-wrap-lg"><canvas id="histGasChart"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panel-label">// Temperature Trend</div>
+        <div class="chart-wrap-lg"><canvas id="histTempChart"></canvas></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-label">// Humidity Trend · Full Session</div>
+      <div style="position:relative; height:160px;"><canvas id="histHumChart"></canvas></div>
+    </div>
+
+    <div class="panel" style="margin-top:16px;">
+      <div class="panel-label">// Raw Data Feed · Most Recent First</div>
+      <div style="overflow-x:auto;">
+        <table class="info-table" id="rawTable">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Gas (PPM)</th>
+              <th>Temperature (°C)</th>
+              <th>Humidity (%)</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="rawTableBody">
+            <tr><td colspan="5" style="text-align:center; color:var(--dim); padding:20px;">Loading data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span>DSCE · IDT SEM 2 · 2026</span>
+      <span>HISTORY LOG · THINGSPEAK</span>
+      <span>AUTO-REFRESH 60s</span>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== INFO PAGE ==================== -->
+<div class="page" id="page-info">
+  <div style="margin-top:24px;">
+    <div class="section-header">
+      <div class="section-title">Air Quality Guide</div>
+      <div class="section-sub">// Reference manual for environmental monitoring parameters</div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-num">01</div>
+        <div class="info-title">What Is Air Quality?</div>
+        <div class="info-body">
+          Air quality refers to the condition of the air within our surroundings. Good air quality indicates clean air with minimal pollutants. Poor air quality can cause health problems ranging from minor irritation to serious respiratory conditions.<br><br>
+          Air Quality Index (AQI) is the standard metric used worldwide to communicate how polluted the air is. It runs from 0 to 500 — the higher the value, the greater the level of air pollution and the greater the health concern.
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-num">02</div>
+        <div class="info-title">MQ-2 Gas Sensor</div>
+        <div class="info-body">
+          The MQ-2 is a semiconductor gas sensor sensitive to LPG, propane, hydrogen, methane, carbon monoxide, and smoke. It works by measuring changes in electrical resistance of a tin dioxide (SnO₂) sensing element when exposed to target gases.<br><br>
+          Resistance decreases as gas concentration increases. The output is an analog voltage converted to PPM (parts per million) by the microcontroller.
+        </div>
+        <table class="info-table">
+          <thead><tr><th>Gas Level (PPM)</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>0 – 200</td><td style="color:var(--green)">Clean</td><td>None required</td></tr>
+            <tr><td>200 – 500</td><td style="color:var(--yellow)">Moderate</td><td>Monitor closely</td></tr>
+            <tr><td>500 – 1000</td><td style="color:var(--amber2)">Poor</td><td>Ventilate area</td></tr>
+            <tr><td>1000+</td><td style="color:var(--red)">Danger</td><td>Evacuate immediately</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="info-card">
+        <div class="info-num">03</div>
+        <div class="info-title">Temperature & Humidity</div>
+        <div class="info-body">
+          The DHT11 sensor measures ambient temperature and relative humidity. Temperature and humidity are critical air quality parameters — high humidity promotes mold growth and increases the concentration of certain pollutants. Ideal indoor conditions are 20–25°C at 40–60% relative humidity.<br><br>
+          High temperature combined with high humidity significantly reduces thermal comfort and can worsen respiratory conditions.
+        </div>
+        <table class="info-table">
+          <thead><tr><th>Parameter</th><th>Ideal Range</th><th>Concern Level</th></tr></thead>
+          <tbody>
+            <tr><td>Temperature</td><td>20 – 25°C</td><td>Above 35°C</td></tr>
+            <tr><td>Humidity</td><td>40 – 60%</td><td>Above 70% or below 30%</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="info-card">
+        <div class="info-num">04</div>
+        <div class="info-title">Outdoor AQI Scale</div>
+        <div class="info-body">
+          The OpenWeatherMap Air Pollution API returns AQI on a scale of 1–5 following the European Air Quality Index standard, measuring PM2.5, PM10, NO₂, O₃, SO₂, and CO concentrations.
+        </div>
+        <table class="info-table">
+          <thead><tr><th>AQI</th><th>Level</th><th>Health Implication</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td style="color:var(--green)">Good</td><td>No health risk</td></tr>
+            <tr><td>2</td><td style="color:var(--green2)">Fair</td><td>Acceptable quality</td></tr>
+            <tr><td>3</td><td style="color:var(--yellow)">Moderate</td><td>Sensitive groups affected</td></tr>
+            <tr><td>4</td><td style="color:var(--amber2)">Poor</td><td>General population affected</td></tr>
+            <tr><td>5</td><td style="color:var(--red)">Very Poor</td><td>Serious health effects</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="info-card">
+        <div class="info-num">05</div>
+        <div class="info-title">ESP32 & IoT Architecture</div>
+        <div class="info-body">
+          This system uses an ESP32 microcontroller — a dual-core 240MHz processor with integrated WiFi and Bluetooth. Sensor data is sampled every 2 seconds, displayed on a local OLED, and transmitted to ThingSpeak cloud every 20 seconds via HTTP GET requests.<br><br>
+          ThingSpeak stores data in time-series channels. This dashboard fetches data via ThingSpeak's REST API and OpenWeatherMap's API for outdoor comparison, rendering everything client-side with no backend server required.
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-num">06</div>
+        <div class="info-title">Health Effects of Poor Air</div>
+        <div class="info-body">
+          Short-term exposure to elevated gas and particulate levels causes eye irritation, coughing, headaches, and dizziness. Prolonged exposure can lead to chronic respiratory conditions including asthma, bronchitis, and reduced lung function.<br><br>
+          Vulnerable groups — children, elderly, and those with pre-existing respiratory or cardiovascular conditions — are significantly more susceptible to the effects of indoor air pollution.
+        </div>
+        <table class="info-table">
+          <thead><tr><th>Symptom</th><th>Likely Cause</th></tr></thead>
+          <tbody>
+            <tr><td>Headache / dizziness</td><td>CO or LPG accumulation</td></tr>
+            <tr><td>Eye / throat irritation</td><td>Smoke or chemical vapors</td></tr>
+            <tr><td>Breathlessness</td><td>High humidity + particulates</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span>DSCE · IDT SEM 2 · 2026</span>
+      <span>AIR QUALITY REFERENCE GUIDE</span>
+      <span>DATA: WHO / EPA / OPENWEATHERMAP</span>
+    </div>
+  </div>
 </div>
 
 <script>
   // ============================================
   // CONFIG — EDIT THESE
   // ============================================
-  const THINGSPEAK_CHANNEL_ID = CONFIG.THINGSPEAK_CHANNEL_ID;
-  const THINGSPEAK_READ_API_KEY = CONFIG.THINGSPEAK_READ_API_KEY;
-  const OPENWEATHER_API_KEY = CONFIG.OPENWEATHER_API_KEY;
-  const CITY = CONFIG.CITY;                                // <-- change city if needed
-  const FETCH_INTERVAL = 20000; // fetch every 20 seconds
+  const THINGSPEAK_CHANNEL_ID = "YOUR_CHANNEL_ID";
+  const THINGSPEAK_READ_API_KEY = "YOUR_READ_API_KEY";
+  const OPENWEATHER_API_KEY = "YOUR_OPENWEATHER_KEY";
+  const CITY = "Bengaluru";
   // ============================================
 
+  let indoor = { gas: null, temp: null, hum: null };
   let gasChart, tempChart, humChart;
-  let latestIndoor = { temp: null, hum: null, gas: null };
+  let histGasChart, histTempChart, histHumChart;
 
-  function log(msg, type = 'info') {
-    const panel = document.getElementById('logPanel');
-    const now = new Date();
-    const time = now.toTimeString().slice(0,8);
-    const colors = { info: '#4a6b8a', ok: '#00ff88', warn: '#ffcc00', error: '#ff3366' };
-    const entry = document.createElement('div');
-    entry.className = 'log-entry';
-    entry.innerHTML = `<span class="log-time">${time}</span><span class="log-msg" style="color:${colors[type]}">${msg}</span>`;
-    panel.insertBefore(entry, panel.firstChild);
-    if (panel.children.length > 50) panel.removeChild(panel.lastChild);
+  // CLOCK
+  setInterval(() => {
+    document.getElementById('clock').textContent = new Date().toTimeString().slice(0,8);
+  }, 1000);
+
+  // PAGE NAV
+  function showPage(id, el) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    el.classList.add('active');
+    if (id === 'history') fetchHistory();
   }
 
-  function initCharts() {
-    const chartDefaults = {
+  // LOG
+  function log(msg, type='info') {
+    const p = document.getElementById('logPanel');
+    const t = new Date().toTimeString().slice(0,8);
+    const c = { info:'var(--dim)', ok:'var(--green)', warn:'var(--yellow)', error:'var(--red)' };
+    const row = document.createElement('div');
+    row.className = 'log-row';
+    row.innerHTML = `<span class="log-t">${t}</span><span class="log-m" style="color:${c[type]}">${msg}</span>`;
+    p.insertBefore(row, p.firstChild);
+    if (p.children.length > 60) p.removeChild(p.lastChild);
+  }
+
+  // CHART DEFAULTS
+  function makeChart(id, color) {
+    return new Chart(document.getElementById(id), {
       type: 'line',
+      data: { labels: [], datasets: [{ data: [], borderColor: color, backgroundColor: color.replace(')', ',0.08)').replace('rgb','rgba'), fill: true, borderWidth: 1.5, pointRadius: 2, pointBackgroundColor: color }] },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
+        responsive: true, maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-          x: { ticks: { color: '#4a6b8a', font: { size: 9, family: 'Share Tech Mono' } }, grid: { color: 'rgba(13,59,102,0.3)' } },
-          y: { ticks: { color: '#4a6b8a', font: { size: 9, family: 'Share Tech Mono' } }, grid: { color: 'rgba(13,59,102,0.3)' } }
+          x: { ticks: { color: '#5a4428', font: { size: 9, family: 'Share Tech Mono' } }, grid: { color: 'rgba(90,72,40,0.2)' } },
+          y: { ticks: { color: '#5a4428', font: { size: 9, family: 'Share Tech Mono' } }, grid: { color: 'rgba(90,72,40,0.2)' } }
         },
-        elements: { point: { radius: 3 }, line: { tension: 0.4 } }
+        elements: { line: { tension: 0.4 } }
       }
-    };
-
-    gasChart = new Chart(document.getElementById('gasChart'), {
-      ...chartDefaults,
-      data: { labels: [], datasets: [{ data: [], borderColor: '#00d4ff', backgroundColor: 'rgba(0,212,255,0.1)', fill: true, borderWidth: 2 }] }
-    });
-
-    tempChart = new Chart(document.getElementById('tempChart'), {
-      ...chartDefaults,
-      data: { labels: [], datasets: [{ data: [], borderColor: '#ffcc00', backgroundColor: 'rgba(255,204,0,0.1)', fill: true, borderWidth: 2 }] }
-    });
-
-    humChart = new Chart(document.getElementById('humChart'), {
-      ...chartDefaults,
-      data: { labels: [], datasets: [{ data: [], borderColor: '#00aaff', backgroundColor: 'rgba(0,170,255,0.1)', fill: true, borderWidth: 2 }] }
     });
   }
 
@@ -644,133 +868,181 @@
     chart.update();
   }
 
-  function getAQIInfo(ppm) {
-    if (ppm < 200) return { status: 'CLEAN', color: '#00ff88', advisory: 'Air quality is excellent. No health concerns. All systems nominal.', glow: '0 0 30px rgba(0,255,136,0.5)' };
-    if (ppm < 500) return { status: 'MODERATE', color: '#ffcc00', advisory: 'Acceptable air quality. Sensitive individuals may experience minor effects.', glow: '0 0 30px rgba(255,204,0,0.5)' };
-    if (ppm < 1000) return { status: 'POOR', color: '#ff8800', advisory: 'Unhealthy for sensitive groups. Consider ventilating the area.', glow: '0 0 30px rgba(255,136,0,0.5)' };
-    return { status: 'DANGER', color: '#ff3366', advisory: 'CRITICAL: Hazardous gas levels detected. Ventilate immediately.', glow: '0 0 30px rgba(255,51,102,0.6)' };
+  // INIT CHARTS
+  gasChart = makeChart('gasChart', 'rgb(232,192,96)');
+  tempChart = makeChart('tempChart', 'rgb(212,168,112)');
+  humChart = makeChart('humChart', 'rgb(143,188,90)');
+
+  // AQI INFO
+  function aqiInfo(ppm) {
+    if (ppm < 200) return { word: 'CLEAN', color: 'var(--green)', advisory: 'Air quality is within safe parameters. All readings nominal. No action required.' };
+    if (ppm < 500) return { word: 'MODERATE', color: 'var(--yellow)', advisory: 'Acceptable conditions. Sensitive individuals may experience minor effects. Monitor closely.' };
+    if (ppm < 1000) return { word: 'POOR', color: 'var(--amber2)', advisory: 'Elevated gas concentration detected. Open windows and ventilate the area immediately.' };
+    return { word: 'DANGER', color: 'var(--red)', advisory: 'CRITICAL: Hazardous gas levels. Evacuate area and ventilate. Do not use open flame.' };
   }
 
-  function getOutdoorAQILabel(aqi) {
-    const labels = { 1: 'GOOD', 2: 'FAIR', 3: 'MODERATE', 4: 'POOR', 5: 'VERY POOR' };
-    return labels[aqi] || '--';
+  function aqiLabel(aqi) {
+    return ['--','GOOD','FAIR','MODERATE','POOR','VERY POOR'][aqi] || '--';
   }
 
-  async function fetchThingSpeak() {
+  // FETCH THINGSPEAK (dashboard - 8 readings)
+  async function fetchDashboard() {
     try {
-      const url = `https://api.thingspeak.com/channels/${THINGSPEAK_CHANNEL_ID}/feeds.json?api_key=${THINGSPEAK_READ_API_KEY}&results=8`;
-      const res = await fetch(url);
-      const data = await res.json();
-      const feeds = data.feeds;
+      const r = await fetch(`https://api.thingspeak.com/channels/${THINGSPEAK_CHANNEL_ID}/feeds.json?api_key=${THINGSPEAK_READ_API_KEY}&results=8`);
+      const d = await r.json();
+      const feeds = d.feeds;
+      if (!feeds?.length) { log('No data received from ThingSpeak', 'warn'); return; }
 
-      if (!feeds || feeds.length === 0) { log('No data from ThingSpeak', 'warn'); return; }
-
-      const labels = feeds.map(f => {
-        const d = new Date(f.created_at);
-        return d.toTimeString().slice(0,5);
-      });
-
-      const gasData = feeds.map(f => parseFloat(f.field1) || 0);
-      const tempData = feeds.map(f => parseFloat(f.field2) || 0);
-      const humData = feeds.map(f => parseFloat(f.field3) || 0);
+      const labels = feeds.map(f => new Date(f.created_at).toTimeString().slice(0,5));
+      const gasData = feeds.map(f => parseFloat(f.field1)||0);
+      const tempData = feeds.map(f => parseFloat(f.field2)||0);
+      const humData = feeds.map(f => parseFloat(f.field3)||0);
 
       updateChart(gasChart, labels, gasData);
       updateChart(tempChart, labels, tempData);
       updateChart(humChart, labels, humData);
 
-      const latest = feeds[feeds.length - 1];
-      const gas = parseFloat(latest.field1) || 0;
-      const temp = parseFloat(latest.field2) || 0;
-      const hum = parseFloat(latest.field3) || 0;
+      const lat = feeds[feeds.length-1];
+      const gas = parseFloat(lat.field1)||0;
+      const temp = parseFloat(lat.field2)||0;
+      const hum = parseFloat(lat.field3)||0;
+      indoor = { gas, temp, hum };
 
-      latestIndoor = { temp, hum, gas };
+      document.getElementById('gasVal').textContent = gas.toFixed(0);
+      document.getElementById('tempVal').textContent = temp.toFixed(1);
+      document.getElementById('humVal').textContent = hum.toFixed(1);
+      document.getElementById('gasBar').style.width = Math.min((gas/1500)*100,100)+'%';
+      document.getElementById('tempBar').style.width = Math.min((temp/50)*100,100)+'%';
+      document.getElementById('humBar').style.width = hum+'%';
+      document.getElementById('compIndTemp').textContent = temp.toFixed(1)+'°';
+      document.getElementById('compIndHum').textContent = hum.toFixed(1)+'%';
+      document.getElementById('statusPPM').textContent = gas.toFixed(0);
+      document.getElementById('footerChannel').textContent = `CH ${THINGSPEAK_CHANNEL_ID} · THINGSPEAK`;
 
-      document.getElementById('gasValue').textContent = gas.toFixed(0);
-      document.getElementById('tempValue').textContent = temp.toFixed(1);
-      document.getElementById('humValue').textContent = hum.toFixed(1);
-
-      document.getElementById('gasBar').style.width = Math.min((gas / 1500) * 100, 100) + '%';
-      document.getElementById('tempBar').style.width = Math.min((temp / 50) * 100, 100) + '%';
-      document.getElementById('humBar').style.width = hum + '%';
-
-      document.getElementById('compIndoorTemp').textContent = temp.toFixed(1) + '°';
-      document.getElementById('compIndoorHum').textContent = hum.toFixed(1) + '%';
-
-      const aqiInfo = getAQIInfo(gas);
-      document.getElementById('aqiNumber').textContent = gas.toFixed(0);
-      document.getElementById('aqiStatus').textContent = aqiInfo.status;
-      document.getElementById('aqiStatus').style.color = aqiInfo.color;
-      document.getElementById('healthAdvisory').textContent = aqiInfo.advisory;
-      document.getElementById('aqiCircle').style.borderColor = aqiInfo.color;
-      document.getElementById('aqiCircle').style.boxShadow = aqiInfo.glow;
-      document.getElementById('aqiNumber').style.color = aqiInfo.color;
-
-      document.getElementById('statusDot').style.background = '#00ff88';
+      const info = aqiInfo(gas);
+      document.getElementById('statusWord').textContent = info.word;
+      document.getElementById('statusWord').style.color = info.color;
+      document.getElementById('statusAdvisory').textContent = info.advisory;
+      document.getElementById('lastUpdate').textContent = new Date().toTimeString().slice(0,8);
+      document.getElementById('statusDot').style.background = 'var(--green)';
       document.getElementById('statusText').textContent = 'LIVE';
-      document.getElementById('statusText').style.color = '#00ff88';
-      document.getElementById('lastUpdate').textContent = 'LAST UPDATE: ' + new Date().toTimeString().slice(0,8);
+      document.getElementById('statusText').style.color = 'var(--green)';
 
-      log(`Indoor — Gas: ${gas.toFixed(0)}ppm | Temp: ${temp.toFixed(1)}°C | Hum: ${hum.toFixed(1)}% — Status: ${aqiInfo.status}`, aqiInfo.status === 'CLEAN' ? 'ok' : aqiInfo.status === 'DANGER' ? 'error' : 'warn');
-
-    } catch (e) {
-      log('ThingSpeak fetch failed: ' + e.message, 'error');
+      log(`Uplink received — Gas: ${gas.toFixed(0)}ppm | Temp: ${temp.toFixed(1)}°C | Hum: ${hum.toFixed(1)}% | Status: ${info.word}`, info.word==='CLEAN'?'ok':info.word==='DANGER'?'error':'warn');
+    } catch(e) {
+      log('ThingSpeak uplink failed: '+e.message, 'error');
       document.getElementById('statusText').textContent = 'ERROR';
-      document.getElementById('statusText').style.color = '#ff3366';
+      document.getElementById('statusText').style.color = 'var(--red)';
     }
   }
 
+  // FETCH WEATHER
   async function fetchWeather() {
     try {
-      const url = `https://api.openweathermap.org/data/2.5/weather?q=${CITY}&appid=${OPENWEATHER_API_KEY}&units=metric`;
-      const res = await fetch(url);
-      const data = await res.json();
+      const r = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${CITY}&appid=${OPENWEATHER_API_KEY}&units=metric`);
+      const d = await r.json();
+      const outTemp = d.main.temp.toFixed(1);
+      const outHum = d.main.humidity;
+      const outFeels = d.main.feels_like.toFixed(1);
+      const wind = d.wind.speed.toFixed(1);
+      const desc = d.weather[0].description;
 
-      const outdoorTemp = data.main.temp.toFixed(1);
-      const outdoorHum = data.main.humidity;
-      const windSpd = data.wind.speed.toFixed(1);
-      const desc = data.weather[0].description;
+      document.getElementById('outTemp').textContent = outTemp+'°';
+      document.getElementById('outDesc').textContent = desc;
+      document.getElementById('outCity').textContent = d.name+', '+d.sys.country;
+      document.getElementById('outWind').textContent = wind+' m/s';
+      document.getElementById('outFeels').textContent = outFeels+'°';
+      document.getElementById('compOutTempVal').textContent = outTemp+'° out';
+      document.getElementById('compOutHumVal').textContent = outHum+'% out';
 
-      document.getElementById('outdoorTemp').textContent = outdoorTemp + '°';
-      document.getElementById('weatherDesc').textContent = desc;
-      document.getElementById('windSpeed').textContent = windSpd;
-
-      document.getElementById('compOutdoorTemp').textContent = outdoorTemp + '° outdoor';
-      document.getElementById('compOutdoorHum').textContent = outdoorHum + '% outdoor';
-
-      if (latestIndoor.temp !== null) {
-        const tDiff = (latestIndoor.temp - outdoorTemp).toFixed(1);
-        const hDiff = (latestIndoor.hum - outdoorHum).toFixed(1);
+      if (indoor.temp !== null) {
+        const td = (indoor.temp - outTemp).toFixed(1);
+        const hd = (indoor.hum - outHum).toFixed(1);
         const tEl = document.getElementById('compTempDiff');
         const hEl = document.getElementById('compHumDiff');
-        tEl.textContent = (tDiff > 0 ? '+' : '') + tDiff + '° vs outdoor';
-        tEl.className = 'comp-diff ' + (tDiff > 2 ? 'worse' : tDiff < -2 ? 'better' : 'same');
-        hEl.textContent = (hDiff > 0 ? '+' : '') + hDiff + '% vs outdoor';
-        hEl.className = 'comp-diff ' + (hDiff > 10 ? 'worse' : 'better');
+        tEl.textContent = (td>0?'+':'')+td+'° vs out';
+        tEl.className = td>3?'diff-worse':td<-3?'diff-better':'diff-same';
+        hEl.textContent = (hd>0?'+':'')+hd+'% vs out';
+        hEl.className = hd>10?'diff-worse':'diff-better';
       }
 
-      // Fetch AQI
-      const lat = data.coord.lat;
-      const lon = data.coord.lon;
-      const aqiUrl = `https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}`;
-      const aqiRes = await fetch(aqiUrl);
-      const aqiData = await aqiRes.json();
-      const aqi = aqiData.list[0].main.aqi;
-      document.getElementById('outdoorAQI').textContent = aqi;
-      document.getElementById('outdoorAQILabel').textContent = getOutdoorAQILabel(aqi);
+      const lat = d.coord.lat, lon = d.coord.lon;
+      const ar = await fetch(`https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}`);
+      const ad = await ar.json();
+      const aqi = ad.list[0].main.aqi;
+      document.getElementById('outAQI').textContent = aqi;
+      document.getElementById('outAQILabel').textContent = aqiLabel(aqi);
+      const aqiColors = ['--','var(--green)','var(--green2)','var(--yellow)','var(--amber2)','var(--red)'];
+      document.getElementById('outAQI').style.color = aqiColors[aqi]||'var(--tan)';
 
-      log(`Outdoor — Temp: ${outdoorTemp}°C | Hum: ${outdoorHum}% | Wind: ${windSpd}m/s | AQI: ${getOutdoorAQILabel(aqi)}`, 'ok');
+      log(`Weather uplink — ${d.name}: ${outTemp}°C, ${desc}, wind ${wind}m/s, AQI ${aqiLabel(aqi)}`, 'ok');
+    } catch(e) {
+      log('Weather uplink failed: '+e.message, 'error');
+    }
+  }
 
-    } catch (e) {
-      log('Weather fetch failed: ' + e.message, 'error');
+  // FETCH HISTORY (30 readings)
+  async function fetchHistory() {
+    try {
+      const r = await fetch(`https://api.thingspeak.com/channels/${THINGSPEAK_CHANNEL_ID}/feeds.json?api_key=${THINGSPEAK_READ_API_KEY}&results=30`);
+      const d = await r.json();
+      const feeds = d.feeds;
+      if (!feeds?.length) return;
+
+      const labels = feeds.map(f => {
+        const dt = new Date(f.created_at);
+        return dt.toTimeString().slice(0,5);
+      });
+      const gasData = feeds.map(f => parseFloat(f.field1)||0);
+      const tempData = feeds.map(f => parseFloat(f.field2)||0);
+      const humData = feeds.map(f => parseFloat(f.field3)||0);
+
+      // Stats
+      const avg = arr => (arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1);
+      const max = arr => Math.max(...arr).toFixed(0);
+      document.getElementById('avgGas').textContent = avg(gasData);
+      document.getElementById('avgTemp').textContent = avg(tempData);
+      document.getElementById('avgHum').textContent = avg(humData);
+      document.getElementById('peakGas').textContent = max(gasData);
+
+      // Init history charts if not done
+      if (!histGasChart) {
+        histGasChart = makeChart('histGasChart', 'rgb(232,192,96)');
+        histTempChart = makeChart('histTempChart', 'rgb(212,168,112)');
+        histHumChart = makeChart('histHumChart', 'rgb(143,188,90)');
+      }
+      updateChart(histGasChart, labels, gasData);
+      updateChart(histTempChart, labels, tempData);
+      updateChart(histHumChart, labels, humData);
+
+      // Raw table
+      const tbody = document.getElementById('rawTableBody');
+      tbody.innerHTML = '';
+      [...feeds].reverse().forEach(f => {
+        const gas = parseFloat(f.field1)||0;
+        const info = aqiInfo(gas);
+        const dt = new Date(f.created_at);
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${dt.toLocaleDateString()} ${dt.toTimeString().slice(0,8)}</td>
+          <td>${gas.toFixed(0)}</td>
+          <td>${parseFloat(f.field2).toFixed(1)||'--'}</td>
+          <td>${parseFloat(f.field3).toFixed(1)||'--'}</td>
+          <td style="color:${info.color}">${info.word}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    } catch(e) {
+      log('History fetch failed: '+e.message, 'error');
     }
   }
 
   // INIT
-  initCharts();
-  log('AirWatch system initializing...', 'info');
-  fetchThingSpeak();
+  log('AirWatch system initialising...', 'info');
+  log('Establishing ThingSpeak uplink...', 'info');
+  fetchDashboard();
   fetchWeather();
-  setInterval(fetchThingSpeak, FETCH_INTERVAL);
+  setInterval(fetchDashboard, 20000);
   setInterval(fetchWeather, 60000);
 </script>
 </body>
